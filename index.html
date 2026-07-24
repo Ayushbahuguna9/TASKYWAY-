@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Way</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#4facfe,#00f2fe);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  padding:20px;
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.timer{
+  text-align:center;
+  font-size:30px;
+  font-weight:bold;
+  color:#ff3b30;
+  margin:15px 0;
+}
+
+.progress{
+  width:100%;
+  height:10px;
+  background:#ddd;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.progress span{
+  display:block;
+  height:100%;
+  width:100%;
+  background:#00c853;
+  transition:1s linear;
+}
+
+.task{
+  background:#f5f5f5;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+.how-to-btn {
+  background: #ff9800;
+  color: #fff;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.rules{
+  background:#fff7e6;
+  border-left:5px solid orange;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:20px;
+  font-size:14px;
+}
+
+.rules ul{
+  padding-left:18px;
+}
+
+button,a{
+  display:block;
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  margin-top:12px;
+  font-size:17px;
+  cursor:pointer;
+  text-decoration:none;
+  text-align:center;
+  color:#fff;
+}
+
+.open{
+  background:#25D366;
+}
+
+.telegram{
+  background:#0088cc;
+}
+
+.popup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.popup-box{
+  background:#fff;
+  padding:25px;
+  width:90%;
+  max-width:320px;
+  border-radius:15px;
+  text-align:center;
+  position:relative;
+}
+
+.popup-box h3{
+  margin-bottom:10px;
+}
+
+.popup-box button{
+  background:#4facfe;
+  margin-top:15px;
+}
+
+.video-box {
+  max-width: 450px;
+  padding: 20px 15px 15px 15px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #ff3b30;
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-top: 10px;
+  background: #000;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <h2>task way</h2>
+
+  <div class="timer" id="timer">05:00</div>
+
+  <div class="progress">
+    <span id="bar"></span>
+  </div>
+
+  <div class="task">
+    <b>Task 1</b><br><br>
+    Click the button below to visit the website.
+  </div>
+
+  <button class="how-to-btn" onclick="openVideo()">
+    📹 How to Complete Task / Register
+  </button>
+
+  <div class="rules">
+    <b>Rules</b>
+    <ul>
+      <li>Open the task link.</li>
+      <li>Register if required.</li>
+      <li>Send your screenshot on Telegram.</li>
+      <li>Do not uninstall the app within 2 days if instructed.</li>
+      <li>Invalid or fake submissions may be rejected.</li>
+    </ul>
+  </div>
+
+  <button class="open" onclick="startTask()">
+    COMPLETE TASK
+  </button>
+
+  <a class="telegram" href="https://t.me/RANDOMVERG0" target="_blank">
+    Contact on Telegram
+  </a>
+
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h3 id="popupTitle"></h3>
+    <p id="popupText"></p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<div class="popup" id="videoPopup">
+  <div class="popup-box video-box">
+    <span class="close-btn" onclick="closeVideo()">&times;</span>
+    <h3>How to Register (Demo)</h3>
+    <div class="video-container">
+      <iframe id="demoVideo" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+let total = 300;
+let current = 300;
+let started = false;
+
+// Aapki YouTube Video Link
+const VIDEO_URL = "https://www.youtube.com/embed/Y1GIml-YGtc?autoplay=1"; 
+
+function showPopup(title, text){
+  document.getElementById("popupTitle").innerHTML = title;
+  document.getElementById("popupText").innerHTML = text;
+  document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display = "none";
+}
+
+function openVideo(){
+  document.getElementById("demoVideo").src = VIDEO_URL;
+  document.getElementById("videoPopup").style.display = "flex";
+}
+
+function closeVideo(){
+  document.getElementById("demoVideo").src = "";
+  document.getElementById("videoPopup").style.display = "none";
+}
+
+function startTask(){
+  window.open("https://playbb.fun/u/28508230", "_blank");
+
+  if(started) return;
+  started = true;
+
+  showPopup(
+    "Task Started",
+    "You have 5 minutes to complete the task."
+  );
+
+  let timer = setInterval(function(){
+    current--;
+
+    let m = Math.floor(current / 60);
+    let s = current % 60;
+
+    if(m < 10) m = "0" + m;
+    if(s < 10) s = "0" + s;
+
+    document.getElementById("timer").innerHTML = m + ":" + s;
+    document.getElementById("bar").style.width = (current / 300 * 100) + "%";
+
+    if(current <= 0){
+      clearInterval(timer);
+      showPopup(
+        "Time Expired",
+        "The 5-minute timer has ended."
+      );
+    }
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
